@@ -1,12 +1,11 @@
 import React from 'react';
 import ContainerBlock from '../components/Container';
+import Hero from '../components/Hero';
 
 export default function Home() {
   return (
     <ContainerBlock>
-      <div className="flex justify-center">
-        <div className="text-green-800">Hello Openeds</div>
-      </div>
+      <Hero />
     </ContainerBlock>
   );
 }

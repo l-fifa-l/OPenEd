@@ -4,8 +4,6 @@ import React from 'react';
 import Head from 'next/head';
 // Nabar import from components
 import Navbar from './Navbar';
-// Footer import from components
-import Footer from './Footer';
 
 // ContainerBlock function from containing other components
 // for SEO
@@ -20,11 +18,10 @@ export default function ContainerBlock({ children }) {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       {/* contain all other components */}
-      <main className="bg-white dark:bg-gray-800 w-full">
+      <main className="bg-gray-50 dark:bg-black w-full min-h-screen">
         <Navbar />
         {/* contain child element */}
-        <div>{children}</div>
-        <Footer />
+        {children}
       </main>
     </>
   );
