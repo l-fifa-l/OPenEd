@@ -11,8 +11,8 @@ import DarkmodeSwitch from './micro/DarkmodeSwitch';
 
 const navigation = [
   { name: 'App', href: '/', current: true },
-  { name: 'Login', href: '/login', current: false },
-  { name: 'Register', href: '/register', current: false },
+  { name: 'Login', href: '/login', current: true },
+  { name: 'Register', href: '/register', current: true },
 ];
 
 function classNames(...classes) {
@@ -21,6 +21,11 @@ function classNames(...classes) {
 
 // Navbar function
 export default function Navbar() {
+  const [current, setCurrent] = useState('');
+  useEffect(() => {
+    process.browser && setCurrent(window.location.pathname);
+  }, [process.browser && window.location.pathname]);
+
   // JSX for Navbar
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -69,12 +74,13 @@ export default function Navbar() {
                       <Link key={item.name} href={item.href}>
                         <div
                           className={classNames(
-                            item.current
-                              ? 'bg-gray-900 text-white'
+                            current === item.href
+                              ? (item.current = true
+                                  ? 'bg-gray-900 text-white'
+                                  : 'text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium')
                               : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                             'px-3 py-2 rounded-md text-sm font-medium'
                           )}
-                          aria-current={item.current ? 'page' : undefined}
                         >
                           {item.name}
                         </div>

@@ -1,11 +1,32 @@
 import { useState } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import Spinner from './micro/Spinner';
+import Link from 'next/link';
 
 export default function Register() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.table({ email, password });
+  const [name, setName] = useState('vivek');
+  const [email, setEmail] = useState('starktestic@gmail.com');
+  const [password, setPassword] = useState('samosa');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    try {
+      setLoading(true);
+      e.preventDefault();
+      // console.table({ email, password });
+      const { data } = await axios.post(`/api/register`, {
+        name,
+        email,
+        password,
+      });
+      toast.success('Registration successful');
+      setLoading(false);
+      // console.log('REGISTER RESPONSE', data);
+    } catch (error) {
+      setLoading(false);
+      toast.error(error.response.data);
+    }
   };
 
   return (
@@ -17,6 +38,20 @@ export default function Register() {
         className="space-y-6 ng-untouched ng-pristine ng-valid"
         onSubmit={handleSubmit}
       >
+        <div className="space-y-1 text-sm">
+          <label htmlFor="text" className="block text-gray-600">
+            name
+          </label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            placeholder="Username"
+            className="w-full px-4 py-3 rounded-md border-gray-300 bg-gray-50 text-gray-800"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
         <div className="space-y-1 text-sm">
           <label htmlFor="email" className="block text-gray-600">
             Email
@@ -51,8 +86,9 @@ export default function Register() {
         <button
           type="submit"
           className="block w-full p-3 text-center text-lg rounded-sm text-gray-50 bg-indigo-600"
+          disabled={!name || !email || !password || loading}
         >
-          Sign in
+          {loading ? <Spinner /> : 'Sign in'}
         </button>
       </form>
       {/* Social Register */}
@@ -76,9 +112,9 @@ export default function Register() {
       </div>
       <p className="text-center text-sm sm:px-6 text-gray-600">
         Have an account?{' '}
-        <a href="#" className="underline text-gray-800">
-          Log in
-        </a>
+        <Link href="/login">
+          <a className="underline text-gray-800">Log in</a>
+        </Link>
       </p>
     </div>
   );
