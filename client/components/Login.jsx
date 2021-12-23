@@ -1,13 +1,30 @@
+import { useState, useEffect, useContext } from 'react';
 import Link from 'next/link';
-import { useState } from 'react';
 import axios from 'axios';
+import { Context } from '../context';
 import { toast } from 'react-toastify';
 import Spinner from './micro/Spinner';
+//
+import { useRouter } from 'next/router';
 
 export default function Login() {
   const [email, setEmail] = useState('starktestic@gmail.com');
   const [password, setPassword] = useState('samosa');
   const [loading, setLoading] = useState(false);
+
+  //state
+  //access context state
+  const { state, dispatch } = useContext(Context);
+  const { user } = state;
+
+  // console.log('state', state);
+
+  //router
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user !== null) router.push('/');
+  }, [user]);
 
   const handleSubmit = async (e) => {
     try {
@@ -20,8 +37,19 @@ export default function Login() {
         password,
       });
       toast.success('Login successful');
+      // console.log('REGISTER RESPONSE', data);
+
+      // provide user state at global level, so that it can be accessable by every component
+      dispatch({
+        type: 'LOGIN',
+        payload: data,
+      });
+
+      // save state in localStorage
+      // save in the user in local storage
+      window.localStorage.setItem('user', JSON.stringify(data));
+      router.push('/');
       setLoading(false);
-      console.log('REGISTER RESPONSE', data);
     } catch (error) {
       setLoading(false);
       toast.error('Login failed');

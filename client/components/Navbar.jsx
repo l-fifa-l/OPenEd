@@ -1,5 +1,5 @@
 // React imports
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useContext } from 'react';
 // Disclosure from headlessui
 import { Disclosure, Menu, Switch, Transition } from '@headlessui/react';
 // icons
@@ -8,6 +8,14 @@ import Icon from 'supercons';
 import Link from 'next/link';
 //darkmode
 import DarkmodeSwitch from './micro/DarkmodeSwitch';
+//
+import { Context } from '../context';
+//
+import axios from 'axios';
+//
+import { toast } from 'react-toastify';
+//
+import { useRouter } from 'next/router';
 
 const navigation = [
   { name: 'App', href: '/', current: true },
@@ -22,9 +30,26 @@ function classNames(...classes) {
 // Navbar function
 export default function Navbar() {
   const [current, setCurrent] = useState('');
+
+  const { state, dispatch } = useContext(Context);
+
+  const { user } = state;
+
+  const router = useRouter();
+
   useEffect(() => {
+    current = window.location.pathname;
+    console.log(current);
     process.browser && setCurrent(window.location.pathname);
   }, [process.browser && window.location.pathname]);
+
+  const logout = async () => {
+    dispatch({ type: 'LOGOUT' });
+    window.localStorage.removeItem('user');
+    const { data } = await axios.get('/api/logout');
+    toast.success(data.message);
+    router.push('/login');
+  };
 
   // JSX for Navbar
   return (
@@ -70,22 +95,66 @@ export default function Navbar() {
                 </div>
                 <div className="hidden sm:block sm:ml-6">
                   <div className="flex space-x-4">
-                    {navigation.map((item) => (
-                      <Link key={item.name} href={item.href}>
-                        <div
-                          className={classNames(
-                            current === item.href
-                              ? (item.current = true
-                                  ? 'bg-gray-900 text-white'
-                                  : 'text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium')
-                              : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                            'px-3 py-2 rounded-md text-sm font-medium'
-                          )}
-                        >
-                          {item.name}
-                        </div>
-                      </Link>
-                    ))}
+                    {/* for looping navbar */}
+                    {/* {user === null &&
+                      navigation.map((item) => (
+                        <Link key={item.name} href={item.href}>
+                          {
+                            <div
+                              className={classNames(
+                                current === item.href
+                                  ? (item.current = true
+                                      ? 'bg-gray-900 text-white'
+                                      : 'text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium')
+                                  : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                                'px-3 py-2 rounded-md text-sm font-medium'
+                              )}
+                            >
+                              {item.name}
+                            </div>
+                          }
+                        </Link>
+                      ))} */}
+                    <Link href="/">
+                      <div
+                        className={classNames(
+                          current === '/'
+                            ? 'bg-gray-900 text-white'
+                            : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                          'px-3 py-2 rounded-md text-sm font-medium'
+                        )}
+                      >
+                        App
+                      </div>
+                    </Link>
+                    {user === null && (
+                      <div className="flex space-x-4">
+                        <Link href="/login">
+                          <div
+                            className={classNames(
+                              current === '/login'
+                                ? 'bg-gray-900 text-white'
+                                : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                              'px-3 py-2 rounded-md text-sm font-medium'
+                            )}
+                          >
+                            Login
+                          </div>
+                        </Link>
+                        <Link href="/register">
+                          <div
+                            className={classNames(
+                              current === '/register'
+                                ? 'bg-gray-900 text-white'
+                                : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                              'px-3 py-2 rounded-md text-sm font-medium'
+                            )}
+                          >
+                            Register
+                          </div>
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -93,69 +162,72 @@ export default function Navbar() {
                 {/* Dark mode switch */}
                 <DarkmodeSwitch />
                 {/* Profile dropdown */}
-                <Menu as="div" className="ml-3 relative">
-                  <div>
-                    <Menu.Button className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-                      <span className="sr-only">Open user menu</span>
-                      <img
-                        className="h-8 w-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
-                      />
-                    </Menu.Button>
-                  </div>
-                  <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(
-                              active ? 'bg-gray-100' : '',
-                              'block px-4 py-2 text-sm text-gray-700'
-                            )}
-                          >
-                            Your Profile
-                          </a>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(
-                              active ? 'bg-gray-100' : '',
-                              'block px-4 py-2 text-sm text-gray-700'
-                            )}
-                          >
-                            Settings
-                          </a>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(
-                              active ? 'bg-gray-100' : '',
-                              'block px-4 py-2 text-sm text-gray-700'
-                            )}
-                          >
-                            Sign out
-                          </a>
-                        )}
-                      </Menu.Item>
-                    </Menu.Items>
-                  </Transition>
-                </Menu>
+                {user !== null && (
+                  <Menu as="div" className="ml-3 relative">
+                    <div>
+                      <Menu.Button className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                        <span className="sr-only">Open user menu</span>
+                        <img
+                          className="h-8 w-8 rounded-full"
+                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                          alt=""
+                        />
+                      </Menu.Button>
+                    </div>
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <Menu.Item>
+                          {({ active }) => (
+                            <Link href="/user">
+                              <a
+                                className={classNames(
+                                  active ? 'bg-gray-100' : '',
+                                  'block px-4 py-2 text-sm text-gray-700'
+                                )}
+                              >
+                                Your Profile
+                              </a>
+                            </Link>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              href="#"
+                              className={classNames(
+                                active ? 'bg-gray-100' : '',
+                                'block px-4 py-2 text-sm text-gray-700'
+                              )}
+                            >
+                              Settings
+                            </a>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item onClick={logout}>
+                          {({ active }) => (
+                            <a
+                              href="#"
+                              className={classNames(
+                                active ? 'bg-gray-100' : '',
+                                'block px-4 py-2 text-sm text-gray-700'
+                              )}
+                            >
+                              Sign out
+                            </a>
+                          )}
+                        </Menu.Item>
+                      </Menu.Items>
+                    </Transition>
+                  </Menu>
+                )}
               </div>
             </div>
           </div>

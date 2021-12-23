@@ -1,14 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Spinner from './micro/Spinner';
 import Link from 'next/link';
+import { Context } from '../context';
+import { useRouter } from 'next/router';
 
 export default function Register() {
   const [name, setName] = useState('vivek');
   const [email, setEmail] = useState('starktestic@gmail.com');
   const [password, setPassword] = useState('samosa');
   const [loading, setLoading] = useState(false);
+
+  //state
+  //access context state
+  const { state } = useContext(Context);
+  const { user } = state;
+
+  // console.log('state', state);
+
+  //router
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user !== null) router.push('/');
+  }, [user]);
 
   const handleSubmit = async (e) => {
     try {
