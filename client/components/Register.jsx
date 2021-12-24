@@ -22,6 +22,7 @@ export default function Register() {
   //router
   const router = useRouter();
 
+  // runs when ever the page mounts
   useEffect(() => {
     if (user !== null) router.push('/');
   }, [user]);

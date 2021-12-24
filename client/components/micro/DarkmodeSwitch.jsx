@@ -7,7 +7,7 @@ import { Switch } from '@headlessui/react';
 export default function DarkmodeSwitch() {
   // state defination for dark mode
   const { theme, setTheme } = useTheme();
-  // state defination for is the components are mounted to enable dark mode
+  // state defination for if the components are mounted to enable dark mode
   const [mounted, setMounted] = useState(false);
   // When mounted on client, now we can show the UI
   useEffect(() => {

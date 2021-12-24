@@ -2,7 +2,7 @@ import { useReducer, createContext, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 
-//initial state
+//initial state of the user is null
 const initialState = {
   user: null,
 };
@@ -14,9 +14,10 @@ const Context = createContext();
 //updatte the state and update data from state
 const rootReducer = (state, action) => {
   switch (action.type) {
+    // on LOGIN user will contain all the value passed to it with other state too
     case 'LOGIN':
       return { ...state, user: action.payload };
-
+    // on LOGOUT user value is set to null
     case 'LOGOUT':
       return { ...state, user: null };
 
@@ -29,13 +30,13 @@ const rootReducer = (state, action) => {
 const Provider = ({ children }) => {
   const [state, dispatch] = useReducer(rootReducer, initialState);
 
-  //   //router
   const router = useRouter();
 
   // access local data in state and dispatch state to context state
   useEffect(() => {
     dispatch({
       type: 'LOGIN',
+      // payload is set to local storage with user values
       payload: JSON.parse(window.localStorage.getItem('user')),
     });
   }, []);

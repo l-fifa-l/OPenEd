@@ -17,21 +17,23 @@ export default function Login() {
   const { state, dispatch } = useContext(Context);
   const { user } = state;
 
-  // console.log('state', state);
-
   //router
   const router = useRouter();
 
+  // runs when ever the page mounts
   useEffect(() => {
     if (user !== null) router.push('/');
   }, [user]);
 
+  // on handle submit
   const handleSubmit = async (e) => {
     try {
       setLoading(true);
+      // to stop reloading of the page
       e.preventDefault();
 
-      console.log(email, password);
+      // console.log(email, password);
+
       const { data } = await axios.post(`/api/login`, {
         email,
         password,
