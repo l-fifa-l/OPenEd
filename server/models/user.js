@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 const { Schema } = mongoose;
 const { ObjectId } = Schema;
 
@@ -24,12 +24,12 @@ const userSchema = new Schema(
     picture: {
       type: String,
       required: true,
-      default: "/avatar.png",
+      default: '/avatar.png',
     },
     role: {
       type: [String],
-      default: ["Subscriber"],
-      enum: ["Subscriber", "Instructor", "Admin"],
+      default: ['Subscriber'],
+      enum: ['Subscriber', 'Instructor', 'Admin'],
     },
     stripe_account_id: '',
     stripe_seller: {},
@@ -44,4 +44,4 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model('User', userSchema);
